@@ -143,6 +143,7 @@ gchar* wintc_query_mime_handler(
     GDesktopAppInfo** out_entry
 )
 {
+    g_message("Hello!");
     gchar* xdg_query_cmd =
         g_strconcat(
             "xdg-mime query default ",
@@ -288,12 +289,13 @@ static gchar* parse_url_in_cmdline(
 
     if (url_regex == NULL)
     {
-        g_regex_new(
-            "^([A-Za-z-]+)://",
-            0,
-            0,
-            NULL // TODO: Handle errors
-        );
+        url_regex =
+            g_regex_new(
+                "^([A-Za-z-]+)://",
+                0,
+                0,
+                NULL // TODO: Handle errors
+            );
     }
 
     gchar*      app_name;
@@ -306,7 +308,7 @@ static gchar* parse_url_in_cmdline(
 
     // Command line isn't a URL, return a duplicate of the original
     //
-    if (g_match_info_get_match_count(match_info) > 0)
+    if (g_match_info_get_match_count(match_info) == 0)
     {
         g_match_info_free(match_info);
         return g_strdup(cmdline);
@@ -323,6 +325,8 @@ static gchar* parse_url_in_cmdline(
                  );
 
     app_name = wintc_query_mime_handler(mime_type, out_error, NULL);
+
+    g_match_info_free(match_info);
 
     if (app_name == NULL)
     {

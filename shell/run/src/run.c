@@ -36,6 +36,7 @@ int main(
     GtkWidget* button_cancel;
     GtkWidget* button_ok;
     GtkWidget* combo_entry;
+    GtkWidget* combo_entry_internal;
     GtkWidget* label_instruction;
     GtkWidget* label_open;
     GtkWidget* icon;
@@ -81,6 +82,7 @@ int main(
     // Create combobox entry
     //
     combo_entry = gtk_combo_box_new_with_entry();
+    combo_entry_internal = gtk_bin_get_child(GTK_BIN(combo_entry));
 
     // Create buttons
     //
@@ -99,7 +101,7 @@ int main(
         button_ok,
         "clicked",
         G_CALLBACK(on_ok_button_clicked),
-        NULL
+        combo_entry_internal
     );
 
     // Create boxes
@@ -176,7 +178,12 @@ static void on_ok_button_clicked(
     gpointer   user_data
 )
 {
-    wintc_launch_command(NULL);
+    GtkEntry* entry = GTK_ENTRY(user_data);
+
+    if (wintc_launch_command(gtk_entry_get_text(entry), NULL))
+    {
+        gtk_main_quit();
+    }
 }
 
 static void on_quit_event(
