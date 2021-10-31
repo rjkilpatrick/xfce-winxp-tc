@@ -84,11 +84,18 @@ int main(
     combo_entry = gtk_combo_box_new_with_entry();
     combo_entry_internal = gtk_bin_get_child(GTK_BIN(combo_entry));
 
+    gtk_entry_set_activates_default(
+        GTK_ENTRY(combo_entry_internal),
+        TRUE
+    );
+
     // Create buttons
     //
     button_browse = gtk_button_new_with_label("Browse...");
     button_cancel = gtk_button_new_with_label("Cancel");
     button_ok     = gtk_button_new_with_label("OK");
+
+    gtk_widget_set_can_default(button_ok, TRUE);
 
     g_signal_connect(
         button_cancel,
@@ -138,6 +145,10 @@ int main(
     // Launch now
     //
     gtk_widget_show_all(window);
+    gtk_window_present_with_time(GTK_WINDOW(window), GDK_CURRENT_TIME);
+
+    gtk_window_set_default(GTK_WINDOW(window), button_ok);
+
     gtk_main();
 
     return 0;
