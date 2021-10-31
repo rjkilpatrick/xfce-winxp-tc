@@ -16,8 +16,8 @@ CORE_COUNT=`nproc`
 CURDIR=`realpath -s "./"`
 PKG_DIR=`realpath -s "./tmp.lib-pkg"`
 REQUIRED_PACKAGES=(
-    'cmake',
-    'fakeroot',
+    'cmake'
+    'fakeroot'
     'make'
 )
 SCRIPTDIR=`dirname "$0"`
@@ -74,6 +74,17 @@ do
         exit 1
     fi
 
+    if [[ -f "${log_path}" ]]
+    then
+        rm -f "${log_path}"
+
+        if [[ $? -gt 0 ]]
+        then
+            echo "Failed delete ${log_path}, skipping build."
+            continue
+        fi
+    fi
+
     # Set up working directory
     #
     build_dir="${lib_dir}/build"
@@ -90,8 +101,8 @@ do
 
     # Compile the source
     #
-    cmake .. -DBUILD_SHARED_LIBS=ON > "${log_path}" > 2>&1
-    make -j${CORE_COUNT} > "${log_path}" > 2>&1
+    cmake .. -DBUILD_SHARED_LIBS=ON >> "${log_path}" 2>&1
+    make -j${CORE_COUNT} >> "${log_path}" 2>&1
 
     if [[ $? -gt 0 ]]
     then
@@ -117,16 +128,16 @@ do
 
     # Copy files
     #
+    cd "${CURDIR}"
+
     cp "${build_dir}/debian-control" "${pkg_debian_dir}/control"
-    cp "${build_dir}/*.h" "${pkg_include_dir}"
-    cp "${build_dir}/*.so*" "${pkg_lib_dir}"
-    cp "${build_dir}/*.pc" "${pkg_pkgconfig_dir}"
+    cp "${build_dir}/"*.h "${pkg_include_dir}"
+    cp "${build_dir}/"*.so* "${pkg_lib_dir}"
+    cp "${build_dir}/"*.pc "${pkg_pkgconfig_dir}"
 
     # Compile package
     #
-    cd "${CURDIR}"
-
-    fakeroot dpkg-deb -v --build "${PKG_DIR}" > "${log_path}" 2>&1
+    fakeroot dpkg-deb -v --build "${PKG_DIR}" >> "${log_path}" 2>&1
 
     if [[ $? -gt 0 ]]
     then
@@ -140,3 +151,5 @@ do
 
     echo "Built lib${libstr}."
 done
+
+echo "Packaging complete."
