@@ -1,5 +1,6 @@
 #include <glib.h>
 #include <gtk/gtk.h>
+#include <wintc-exec.h>
 
 //
 // FORWARD DECLARATIONS
@@ -94,6 +95,13 @@ int main(
         NULL
     );
 
+    g_signal_connect(
+        button_ok,
+        "clicked",
+        G_CALLBACK(on_ok_button_clicked),
+        NULL
+    );
+
     // Create boxes
     //
     box_outer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
@@ -163,6 +171,14 @@ static void gtk_widget_add_css(
 //
 // CALLBACKS
 //
+static void on_ok_button_clicked(
+    GtkWidget* button,
+    gpointer   user_data
+)
+{
+    wintc_launch_command(NULL);
+}
+
 static void on_quit_event(
     GtkWidget* widget,
     gpointer   user_data

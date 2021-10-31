@@ -112,14 +112,14 @@ do
 
     # Source dir paths from the pkg-config file (arch-dependant dirs)
     #
-    source <(head --lines=4 "${build_dir}/wintc-exec.pc")
+    source <(head --lines=5 "${build_dir}/wintc-exec.pc")
 
     # Set up our package's working directory
     #
     pkg_debian_dir="${PKG_DIR}/DEBIAN"
     pkg_include_dir="${PKG_DIR}${includedir}"
     pkg_lib_dir="${PKG_DIR}${libdir}"
-    pkg_pkgconfig_dir="${pkg_lib_dir}/pkg-config"
+    pkg_pkgconfig_dir="${PKG_DIR}${pkgconfigdir}"
 
     mkdir -p "${pkg_debian_dir}"
     mkdir -p "${pkg_include_dir}"
