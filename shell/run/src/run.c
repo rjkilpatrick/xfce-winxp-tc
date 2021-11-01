@@ -1,3 +1,4 @@
+#include <gdk/gdk.h>
 #include <glib.h>
 #include <gtk/gtk.h>
 #include <wintc-exec.h>
@@ -133,6 +134,10 @@ int main(
     gtk_box_pack_end(GTK_BOX(box_buttons), button_ok, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(box_outer), box_buttons, FALSE, FALSE, 0);
 
+    // Set OK button as default widget
+    //
+    gtk_window_set_default(GTK_WINDOW(window), button_ok);
+
     // Apply styles
     //
     gtk_widget_add_css(box_outer, "box { margin: 18px 11px 0px; }");
@@ -142,12 +147,25 @@ int main(
     gtk_widget_add_css(icon, "image { margin-right: 11px; }");
     gtk_widget_add_css(label_open, "label { margin-right: 11px; }");
 
-    // Launch now
+    // Initial positioning
+    //
+    GdkDisplay*  default_display = gdk_display_get_default();
+    GdkRectangle geometry;
+    GdkMonitor*  primary_monitor = gdk_display_get_primary_monitor(default_display);
+
+    gdk_monitor_get_geometry(primary_monitor, &geometry);
+
+    gtk_window_set_gravity(GTK_WINDOW(window), GDK_GRAVITY_SOUTH_EAST); // Critical!
+    gtk_window_move(
+        GTK_WINDOW(window),
+        0,
+        geometry.height
+    );
+
+    // Display now!
     //
     gtk_widget_show_all(window);
     gtk_window_present_with_time(GTK_WINDOW(window), GDK_CURRENT_TIME);
-
-    gtk_window_set_default(GTK_WINDOW(window), button_ok);
 
     gtk_main();
 
